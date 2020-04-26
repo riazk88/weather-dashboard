@@ -11,8 +11,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css"/>
   <link rel="stylesheet" href="assets/css/style.css" />
 
-
-
 </head>
 
 <body>
@@ -39,6 +37,12 @@
             <div class="col-sm-8">
                 <div class="jumbotron">
                     <h1 class="city"></h1>
+                    <p id="demo">
+                        <script>
+                            var d = new Date();
+                            document.getElementById("demo").innerHTML = d;
+                        </script>
+                    </p>
                     <img id="icon"></img>
                     <h3 class="temp"></h3>
                     <h3 class="humidity"></h3>

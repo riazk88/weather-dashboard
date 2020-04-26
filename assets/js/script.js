@@ -1,14 +1,20 @@
 var apiKey = '5871e129d3e74bfe77aa47dee5c6f7a3';
 
+searchHistory = JSON.parse(localStorage.getItem("cities"));
 
+if (searchHistory) {
+    city=searchHistory[0].name;
+    window.onload=weatherCall(city)
+    console.log(searchHistory)
+};
 
 $("#searchButton").on('click', function() {
     city = $(this).parent("div").children("div").children("input").val();
     $(this).parent("div").children("div").children("input").val("");
-    currentCall();
+    weatherCall();
 })
 
-function currentCall() {
+function weatherCall() {
     var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
     $.ajax({
         url: queryURL,
@@ -19,7 +25,9 @@ function currentCall() {
             var iconCode = response.weather[0].icon;
             var iconURL = "http://openweathermap.org/img/w/" + iconCode +".png";
 
-            cityObject = response.name;
+            cityObject = {
+                name: response.name
+            }
 
             cityArray = JSON.parse(localStorage.getItem("cities"));
             if (cityArray === null) {
@@ -61,7 +69,6 @@ function currentCall() {
 
                 //how to get the five day forecast
                 var fiveDayURL = `https://api.openweathermap.org/data/2.5/forecast?appid=${apiKey}&id=${cityId}&units=imperial`;
-                var index = 3;
 
                 $.ajax({
                     url: fiveDayURL,
@@ -70,13 +77,13 @@ function currentCall() {
                 .then(function (response){
                     for (var i = 0; i <response.list.length; i += 8) {
                         var iconCode = response.list[i].weather[0].icon;
-                        var iconURL = 'http://openweather.org/img/wn/' + iconCode + ".png";
-
+                        var iconURL = "http://openweathermap.org/img/w/" + iconCode +".png";
+                        // var weekDate = response.list[i].forcast.time.from;
                         
-                        $("#day-" + index).text(shortDate);
-                        $("#temp-" + index).text("Temp: " + response.list[i].main.temp);
-                        $("#humid-" + index).text("Humidity: " + response.list[i].main.humidity);
-                        $("#icon-" + index).attr('src', iconURL);
+                        // $("#day-" + i).text(weekDate);
+                        $("#temp-" + i).text("Temp: " + response.list[i].main.temp + "F");
+                        $("#humid-" + i).text("Humidity: " + response.list[i].main.humidity + "%");
+                        $("#icon-" + i).attr('src', iconURL);
                     }
                 })
         })
@@ -84,5 +91,5 @@ function currentCall() {
 
 $(document).on('click', "li", function() {
     city=$(this).text();
-    currentCall();
+    weatherCall();
 })
