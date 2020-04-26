@@ -49,6 +49,7 @@ function currentCall() {
             cityLon = response.coord.lon;
             cityId = response.id;
 
+            //how to get UV Index
             var uviURL = `https://api.openweathermap.org/data/2.5/uvi?appid=${apiKey}&lat=${cityLat}&lon=${cityLon}&units=imperial`;
             $.ajax({
                 url: uviURL,
@@ -56,20 +57,21 @@ function currentCall() {
             })
                 .then(function (response) {
                     $(".uvIndex").text("UV Index: " + response.value);
-                    var $dateHeader = $("<h2>");
-                    $dateHeader.text(shortDate);
-                    $("h1").append($dateHeader);
                 })
+
+                //how to get the five day forecast
                 var fiveDayURL = `https://api.openweathermap.org/data/2.5/forecast?appid=${apiKey}&id=${cityId}&units=imperial`;
+                var index = 3;
+
                 $.ajax({
                     url: fiveDayURL,
                     method: "GET",
                 })
                 .then(function (response){
                     for (var i = 0; i <response.list.length; i += 8) {
-                        // var iconCode = response.list[i].weather[0].icon;
-                        // var iconURL = 'http://openweather.org/img/wn/' + iconCode + ".png";
-                        // var shortDate = response.list[i].dt_text.substr(0, response.list[i].dt_txt.indexOf(' '));
+                        var iconCode = response.list[i].weather[0].icon;
+                        var iconURL = 'http://openweather.org/img/wn/' + iconCode + ".png";
+
                         
                         $("#day-" + index).text(shortDate);
                         $("#temp-" + index).text("Temp: " + response.list[i].main.temp);
