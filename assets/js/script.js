@@ -1,5 +1,9 @@
 var apiKey = '5871e129d3e74bfe77aa47dee5c6f7a3';
 
+function searchHistory() {
+    localStorage.setItem("cities", JSON.stringify(cities));
+};
+
 searchHistory = JSON.parse(localStorage.getItem("cities"));
 
 if (searchHistory) {
@@ -21,7 +25,6 @@ function weatherCall() {
         method: "GET",
     })
         .then(function (response) {
-            var $cityLi = $("<li>", {"class": "list-group-item"});
             var iconCode = response.weather[0].icon;
             var iconURL = "http://openweathermap.org/img/w/" + iconCode +".png";
 
@@ -65,6 +68,20 @@ function weatherCall() {
             })
                 .then(function (response) {
                     $(".uvIndex").text("UV Index: " + response.value);
+
+                    //set UV Index colors
+                    if (response.value <= 2){
+                        $('.uvIndex').css('background-color', '##008000');
+                    } else if (response.value >2 && response.value <= 5) {
+                        $('.uvIndex').css('background-color', '#FFFF00');
+                    } else if (response.value >5 && response.value <= 7) {
+                        $('.uvIndex').css('background-color', '#FF4500');
+                    } else if (response.value >7 && response.value <= 10) {
+                        $('.uvIndex').css('background-color', '#D1394A');
+                    } else if (response.value >10) {
+                        $('.uvIndex').css('background-color', '#FF0000');
+                    }
+
                 })
 
                 //how to get the five day forecast
@@ -78,9 +95,6 @@ function weatherCall() {
                     for (var i = 0; i <response.list.length; i += 8) {
                         var iconCode = response.list[i].weather[0].icon;
                         var iconURL = "http://openweathermap.org/img/w/" + iconCode +".png";
-                        // var weekDate = response.list[i].forcast.time.from;
-                        
-                        // $("#day-" + i).text(weekDate);
                         $("#temp-" + i).text("Temp: " + response.list[i].main.temp + "F");
                         $("#humid-" + i).text("Humidity: " + response.list[i].main.humidity + "%");
                         $("#icon-" + i).attr('src', iconURL);
@@ -89,7 +103,7 @@ function weatherCall() {
         })
 };
 
-$(document).on('click', "li", function() {
+$(document).on('click', function() {
     city=$(this).text();
     weatherCall();
 })
